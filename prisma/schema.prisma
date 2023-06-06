@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  idUser   String   @id @default(uuid())
+  email    String   @unique
+  password String
+  role     String
+  student  Student?
+  teacher  Teacher?
+  clerk    Clerk?
+}
+
+model Student {
+  idStudent          String               @id @default(uuid())
+  nameStudent        String
+  noICStudent        String               @unique
+  dateOfBirth        String
+  noPhoneStudent     String
+  form               Int
+  address            String
+  nameParent         String
+  noICParent         String
+  noPhoneParent      String
+  isRegistered       Boolean
+  user               User                 @relation(fields: [idUser], references: [idUser])
+  idUser             String               @unique
+  student_Subject    Student_Subject[]
+  tuitionFee         TuitionFee[]
+  student_Attendance Student_Attendance[]
+}
+
+model Subject {
+  idSubject       String            @id @default(uuid())
+  name            String
+  time            String
+  day             String
+  fee             String
+  teacher         Teacher?          @relation(fields: [idTeacher], references: [idTeacher])
+  idTeacher       String?
+  student_Subject Student_Subject[]
+  // tuitionFee      TuitionFee[]
+  attendance      Attendance[]
+}
+
+model Student_Subject {
+  idStudentSubject String  @id @default(uuid())
+  subject          Subject @relation(fields: [idSubject], references: [idSubject])
+  idSubject        String
+  student          Student @relation(fields: [idStudent], references: [idStudent])
+  idStudent        String
+}
+
+model Teacher {
+  idTeacher      String    @id @default(uuid())
+  user           User      @relation(fields: [idUser], references: [idUser])
+  idUser         String    @unique
+  nameTeacher    String
+  noICTeacher    String
+  ageTeacher     Int
+  noPhoneTeacher String
+  addressTeacher String
+  subjects       Subject[]
+}
+
+model Clerk {
+  idClerk String @id @default(uuid())
+  user    User   @relation(fields: [idUser], references: [idUser])
+  idUser  String @unique
+}
+
+model TuitionFee {
+  idTuitionFee String  @id @default(uuid())
+  student      Student @relation(fields: [idStudent], references: [idStudent])
+  idStudent    String
+  subjectsList String
+  month        Int
+  year         Int
+  amount       Int
+  isPaid  Boolean
+  transactionDate String?
+}
+
+model MonthlyReport {
+  idMonthlyReport  String @id @default(uuid())
+  month            Int
+  year             Int
+  totalStudents    Int
+  totalTeachers    Int
+  totalTuitionFees Int
+}
+
+model Attendance {
+  idAttendance       String               @id @default(uuid())
+  date               String
+  time               String
+  student_Attendance Student_Attendance[]
+  subject            Subject              @relation(fields: [idSubject], references: [idSubject])
+  idSubject          String
+}
+
+model Student_Attendance {
+  idStudentAttendance String     @id @default(uuid())
+  attendance          Attendance @relation(fields: [idAttendance], references: [idAttendance])
+  idAttendance        String
+  student             Student    @relation(fields: [idStudent], references: [idStudent])
+  idStudent           String
+  isAttend            Boolean
+}
