@@ -493,8 +493,31 @@ app.get("/api/attendance/:attendanceId", async (req, res) => {
     }
 });
 
-// Get tuition fee
+// Create tuition fee
 app.post("/api/tuitionfee", async (req, res) => {
+    const { month, year, idStudent, amount, subjectsList } = req.body;
+    console.log(req.body);
+    console.log(idStudent);
+    try {
+        const tuitionfee = await prisma.tuitionFee.create({
+            data: {
+                month,
+                year,
+                idStudent,
+                amount,
+                subjectsList,
+                isPaid: false,
+            },
+        });
+        return res.status(200).json(tuitionfee);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// Get tuition fee
+app.post("/api/checktuitionfee", async (req, res) => {
     const { month, year, idStudent } = req.body;
     console.log(req.body);
     console.log(idStudent);
