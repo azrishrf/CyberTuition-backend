@@ -496,8 +496,6 @@ app.get("/api/attendance/:attendanceId", async (req, res) => {
 // Create tuition fee
 app.post("/api/tuitionfee", async (req, res) => {
     const { month, year, idStudent, amount, subjectsList } = req.body;
-    console.log(req.body);
-    console.log(idStudent);
     try {
         const tuitionfee = await prisma.tuitionFee.create({
             data: {
@@ -519,8 +517,6 @@ app.post("/api/tuitionfee", async (req, res) => {
 // Get tuition fee
 app.post("/api/checktuitionfee", async (req, res) => {
     const { month, year, idStudent } = req.body;
-    console.log(req.body);
-    console.log(idStudent);
     try {
         const tuitionfee = await prisma.tuitionFee.findFirst({
             where: { month, year, idStudent },
