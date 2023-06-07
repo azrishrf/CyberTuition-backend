@@ -252,6 +252,57 @@ app.get("/api/user/:userId", async (req, res) => {
     }
 });
 
+// Check user data
+app.post("/api/existinguser/:email", async (req, res) => {
+    const { email } = req.params;
+    try {
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
+        const isExistingUser = !!existingUser;
+        res.json(isExistingUser);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Unable to retrieve users" });
+    }
+});
+
+// Check student data
+app.post("/api/existingstudent/:noICStudent", async (req, res) => {
+    const { noICStudent } = req.params;
+    try {
+        const existingStudent = await prisma.student.findUnique({
+            where: { noICStudent },
+        });
+        const isExistingStudent = !!existingStudent;
+
+        res.json(isExistingStudent);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Unable to retrieve users" });
+    }
+});
+
+// app.post("/api/checkuser", async (req, res) => {
+//     const { email, noICStudent } = req.body;
+//     try {
+//         const existingUser = await prisma.user.findFirst({
+//             where: {
+//                 OR: [
+//                     { email: email },
+//                     { student: { noICStudent: noICStudent } },
+//                 ],
+//             },
+//         });
+//         const isExistingUser = !!existingUser;
+
+//         res.json(isExistingUser);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: "Unable to retrieve user information" });
+//     }
+// });
+
 // Get student id
 app.get("/api/student/:studentId", async (req, res) => {
     const { studentId } = req.params;
