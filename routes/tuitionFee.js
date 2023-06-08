@@ -3,15 +3,36 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // Create tuition fee
-router.post("/api/createtuitionfee", async (req, res) => {
-    const { month, year, idStudent, subjectsList } = req.body;
-    console.log(req.body);
-    console.log(idStudent);
+// router.post("/api/createtuitionfee", async (req, res) => {
+//     const { month, year, idStudent, subjectsList } = req.body;
+//     console.log(req.body);
+//     console.log(idStudent);
+//     try {
+//         const createTuitionfee = await prisma.tuitionFee.create({
+//             data: { month, year, idStudent, subjectsList, isPaid: false },
+//         });
+//         return res.status(200).json(createTuitionfee);
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ message: "Internal server error" });
+//     }
+// });
+
+// Create tuition fee
+router.post("/api/tuitionfee", async (req, res) => {
+    const { month, year, idStudent, amount, subjectsList } = req.body;
     try {
-        const createTuitionfee = await prisma.tuitionFee.create({
-            data: { month, year, idStudent, subjectsList, isPaid: false },
+        const tuitionfee = await prisma.tuitionFee.create({
+            data: {
+                month,
+                year,
+                idStudent,
+                amount,
+                subjectsList,
+                statusPayment: "Belum Dibayar",
+            },
         });
-        return res.status(200).json(createTuitionfee);
+        return res.status(200).json(tuitionfee);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
@@ -42,28 +63,8 @@ router.post("/api/check-tuition-fee", async (req, res) => {
     }
 });
 
-// Create tuition fee
-router.post("/api/tuitionfee", async (req, res) => {
-    const { month, year, idStudent, amount, subjectsList } = req.body;
-    try {
-        const tuitionfee = await prisma.tuitionFee.create({
-            data: {
-                month,
-                year,
-                idStudent,
-                amount,
-                subjectsList,
-                isPaid: false,
-            },
-        });
-        return res.status(200).json(tuitionfee);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Internal server error" });
-    }
-});
-
 // Get tuition fee
+// Student
 router.post("/api/checktuitionfee", async (req, res) => {
     const { month, year, idStudent } = req.body;
     try {
@@ -99,7 +100,28 @@ router.post("/api/tuition-fee/:studentId", async (req, res) => {
     }
 });
 
-// Payment Gateway
+// Get existing payment gateway
+// Student
+router.get("/api/tuitionfee/paymentgateway/:idTuitionFee", async (req, res) => {
+    const idTuitionFee = req.params.idTuitionFee;
+
+    try {
+        const tuitionFeeWithPaymentGateway = await prisma.tuitionFee.findUnique(
+            {
+                where: { idTuitionFee },
+                include: { paymentGateway: true },
+            }
+        );
+
+        res.json(tuitionFeeWithPaymentGateway.paymentGateway); // Sending payment gateway data as a response
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+// Payment Gateway - create new bill
+// Student
 router.post("/api/createBill", async (req, res) => {
     const requestData = req.body;
 

@@ -76,15 +76,35 @@ model Clerk {
 }
 
 model TuitionFee {
-  idTuitionFee String  @id @default(uuid())
-  student      Student @relation(fields: [idStudent], references: [idStudent])
-  idStudent    String
-  subjectsList String
-  month        Int
-  year         Int
-  amount       Int
-  isPaid  Boolean
-  transactionDate String?
+  idTuitionFee   String          @id @default(uuid())
+  student        Student         @relation(fields: [idStudent], references: [idStudent])
+  idStudent      String
+  subjectsList   String
+  month          Int
+  year           Int
+  amount         Int
+  statusPayment  String
+  paymentMethod  String?
+  createdAt      DateTime        @default(now())
+  paymentGateway PaymentGateway?
+  receiptBank    ReceiptBank?
+}
+
+model PaymentGateway {
+  paymentGatewayId String     @id @default(uuid())
+  transactionBill  String
+  billCode         String
+  createdAt        DateTime   @default(now())
+  tuitionFee       TuitionFee @relation(fields: [idTuitionFee], references: [idTuitionFee])
+  idTuitionFee     String     @unique
+}
+
+model ReceiptBank {
+  receiptBankId String     @id @default(uuid())
+  filePath         String
+  createdAt     DateTime   @default(now())
+  tuitionFee    TuitionFee @relation(fields: [idTuitionFee], references: [idTuitionFee])
+  idTuitionFee  String     @unique
 }
 
 model MonthlyReport {

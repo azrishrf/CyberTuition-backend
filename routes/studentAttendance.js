@@ -29,7 +29,7 @@ router.get("/api/studentAttendance/:idStudentAttendance", async (req, res) => {
     }
 });
 
-// Get student that attend
+// Get amount of students that attend
 router.get("/api/studentattend/:attendanceId", async (req, res) => {
     const { attendanceId } = req.params;
 
@@ -135,6 +135,7 @@ router.put("/api/markNotAttend/student_attendance", async (req, res) => {
 });
 
 // checks if the idSubject in student_Subject is the same as the idSubject in attendance
+// used when student want to scan qr code to make sure student scan correct subject qr code
 router.post("/api/student_subject/check-subject-match", async (req, res) => {
     const { idStudent, idAttendance } = req.body;
 
@@ -155,17 +156,12 @@ router.post("/api/student_subject/check-subject-match", async (req, res) => {
 
             if (match) {
                 res.json(true);
-                // res.json("match is true ");
             } else {
                 res.json(false);
-                // res.json("match is false ");
             }
         } else {
             res.json(false);
-            // res.json("Attendance id wrong");
         }
-
-        // console.log(attendance.idSubject);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "An error occurred" });
