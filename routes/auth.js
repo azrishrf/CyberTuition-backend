@@ -1,5 +1,4 @@
 const router = require("express").Router();
-
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
@@ -12,13 +11,13 @@ router.post("/api/login", async (req, res) => {
     });
 
     if (!user) {
-        return res.status(401).send("Invalid email");
+        return res.status(401).json({ error: "E-Mel Tidak Sah" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-        return res.status(401).send("Invalid password");
+        return res.status(401).json({ error: "Kata Laluan Tidak Sah" });
     }
 
     const userData = user.idUser;
