@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { getMalaysiaDateTime } = require("../datetimeUtils");
 
 // Create tuition fee
 // router.post("/api/createtuitionfee", async (req, res) => {
@@ -141,15 +142,58 @@ router.post("/api/createBill", async (req, res) => {
     }
 });
 
+// Create payment gateway data
+// Student
+router.post("/api/paymentgateway", async (req, res) => {
+    try {
+        const { billCode, idTuitionFee } = req.body;
+
+        const createdPaymentGateway = await prisma.paymentGateway.create({
+            data: {
+                billCode,
+                idTuitionFee,
+            },
+        });
+
+        res.json(createdPaymentGateway);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+router.put("/api/paymentgateway", async (req, res) => {
+    try {
+        const { transactionBill, paymentGatewayId } = req.body;
+
+        const transactionDate = getMalaysiaDateTime();
+
+        const createdPaymentGateway = await prisma.paymentGateway.update({
+            where: { paymentGatewayId },
+            data: {
+                transactionBill,
+                transactionDate,
+            },
+        });
+
+        res.json(createdPaymentGateway);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
 // Update tuition fee after user success make a payment
 router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
     const idTuitionFee = req.params.idTuitionFee;
-    const { transactionDate } = req.body;
 
     try {
         const updatedTuitionFee = await prisma.tuitionFee.update({
             where: { idTuitionFee },
-            data: { isPaid: true, transactionDate },
+            data: {
+                statusPayment: "Telah Dibayar",
+                paymentMethod: "Payment Gateway",
+            },
         });
 
         res.json(updatedTuitionFee);
