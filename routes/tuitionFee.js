@@ -101,6 +101,7 @@ router.post("/api/tuition-fee/:studentId", async (req, res) => {
     }
 });
 
+// Payment Gateway
 // Get existing payment gateway
 // Student
 router.get("/api/tuitionfee/paymentgateway/:idTuitionFee", async (req, res) => {
@@ -162,6 +163,8 @@ router.post("/api/paymentgateway", async (req, res) => {
     }
 });
 
+// Update payment gateway data
+// Student
 router.put("/api/paymentgateway", async (req, res) => {
     try {
         const { transactionBill, paymentGatewayId } = req.body;
@@ -183,7 +186,8 @@ router.put("/api/paymentgateway", async (req, res) => {
     }
 });
 
-// Update tuition fee after user success make a payment
+// Update tuition fee after user success make a payment through payment gateway
+// Student
 router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
     const idTuitionFee = req.params.idTuitionFee;
 
@@ -200,6 +204,52 @@ router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Failed to update tuition fee." });
+    }
+});
+
+// Upload receipt bank
+// Create receipt bank data
+// Student
+router.post("/api/receiptbank", async (req, res) => {
+    try {
+        const { filePath, idTuitionFee } = req.body;
+        const createdAt = getMalaysiaDateTime();
+
+        const createdReceiptBank = await prisma.receiptBank.create({
+            data: {
+                filePath,
+                idTuitionFee,
+                createdAt,
+            },
+        });
+
+        res.json(createdReceiptBank);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+// Delete receipt bank
+// Student
+router.delete("/api/receiptbank/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find the receipt bank entry by ID
+        const receiptBank = await prisma.receiptBank.findUnique({
+            where: { receiptBankId: id },
+        });
+
+        // Delete the receipt bank entry
+        await prisma.receiptBank.delete({
+            where: { receiptBankId: id },
+        });
+
+        res.json("Receipt bank deleted successfully");
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error." });
     }
 });
 
