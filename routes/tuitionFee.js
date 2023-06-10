@@ -22,6 +22,8 @@ const { getMalaysiaDateTime } = require("../datetimeUtils");
 // Create tuition fee
 router.post("/api/tuitionfee", async (req, res) => {
     const { month, year, idStudent, amount, subjectsList } = req.body;
+    const createdAt = getMalaysiaDateTime();
+
     try {
         const tuitionfee = await prisma.tuitionFee.create({
             data: {
@@ -31,6 +33,7 @@ router.post("/api/tuitionfee", async (req, res) => {
                 amount,
                 subjectsList,
                 statusPayment: "Belum Dibayar",
+                createdAt,
             },
         });
         return res.status(200).json(tuitionfee);
@@ -208,11 +211,30 @@ router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
 });
 
 // Upload receipt bank
+// Student
+router.get("/api/receiptbank/:idTuitionFee", async (req, res) => {
+    const idTuitionFee = req.params.idTuitionFee;
+
+    try {
+        const receiptBank = await prisma.receiptBank.findUnique({
+            where: {
+                idTuitionFee,
+            },
+        });
+
+        res.json(receiptBank);
+    } catch (error) {
+        res.status(500).json({
+            error: "An error occurred while fetching receipt bank data.",
+        });
+    }
+});
+
 // Create receipt bank data
 // Student
 router.post("/api/receiptbank", async (req, res) => {
     try {
-        const { filePath, idTuitionFee } = req.body;
+        const { filePath, idTuitionFee, fileName } = req.body;
         const createdAt = getMalaysiaDateTime();
 
         const createdReceiptBank = await prisma.receiptBank.create({
@@ -220,6 +242,7 @@ router.post("/api/receiptbank", async (req, res) => {
                 filePath,
                 idTuitionFee,
                 createdAt,
+                fileName,
             },
         });
 
@@ -235,11 +258,6 @@ router.post("/api/receiptbank", async (req, res) => {
 router.delete("/api/receiptbank/:id", async (req, res) => {
     try {
         const { id } = req.params;
-
-        // Find the receipt bank entry by ID
-        const receiptBank = await prisma.receiptBank.findUnique({
-            where: { receiptBankId: id },
-        });
 
         // Delete the receipt bank entry
         await prisma.receiptBank.delete({

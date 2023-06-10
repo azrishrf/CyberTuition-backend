@@ -29,6 +29,7 @@ model Student {
   noICParent         String
   noPhoneParent      String
   isRegistered       Boolean
+  createdAt          String
   user               User                 @relation(fields: [idUser], references: [idUser])
   idUser             String               @unique
   student_Subject    Student_Subject[]
@@ -66,6 +67,7 @@ model Teacher {
   ageTeacher     Int
   noPhoneTeacher String
   addressTeacher String
+  createdAt      String
   subjects       Subject[]
 }
 
@@ -85,7 +87,7 @@ model TuitionFee {
   amount         Int
   statusPayment  String
   paymentMethod  String?
-  createdAt      DateTime        @default(now())
+  createdAt      String
   paymentGateway PaymentGateway?
   receiptBank    ReceiptBank?
 }
@@ -102,6 +104,7 @@ model PaymentGateway {
 model ReceiptBank {
   receiptBankId String     @id @default(uuid())
   filePath      String
+  fileName      String
   createdAt     String
   tuitionFee    TuitionFee @relation(fields: [idTuitionFee], references: [idTuitionFee])
   idTuitionFee  String     @unique
