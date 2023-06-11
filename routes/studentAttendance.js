@@ -1,11 +1,14 @@
 const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { getMalaysiaDateTime } = require("../datetimeUtils");
 
 // Create student_attendance
 router.post("/api/student_attendance", async (req, res) => {
+    const createdAt = getMalaysiaDateTime();
+
     const studentAttendance = await prisma.student_Attendance.create({
-        data: req.body,
+        data: { ...req.body, createdAt },
     });
     res.json(studentAttendance);
 });

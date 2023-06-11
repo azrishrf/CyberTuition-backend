@@ -42,12 +42,13 @@ model Subject {
   name            String
   time            String
   day             String
-  fee             String
+  fee             Int
   teacher         Teacher?          @relation(fields: [idTeacher], references: [idTeacher])
   idTeacher       String?
   student_Subject Student_Subject[]
   // tuitionFee      TuitionFee[]
   attendance      Attendance[]
+   
 }
 
 model Student_Subject {
@@ -56,6 +57,7 @@ model Student_Subject {
   idSubject        String
   student          Student @relation(fields: [idStudent], references: [idStudent])
   idStudent        String
+  createdAt String
 }
 
 model Teacher {
@@ -135,4 +137,5 @@ model Student_Attendance {
   student             Student    @relation(fields: [idStudent], references: [idStudent])
   idStudent           String
   isAttend            Boolean
+  createdAt String
 }
