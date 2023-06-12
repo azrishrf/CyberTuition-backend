@@ -30,6 +30,9 @@ router.get("/api/students_registered", async (req, res) => {
                 isRegistered: true,
             },
             include: { user: true },
+            orderBy: {
+                createdAt: "asc",
+            },
         });
         res.json(students);
     } catch (error) {
@@ -46,6 +49,9 @@ router.get("/api/students_notregistered", async (req, res) => {
                 isRegistered: false,
             },
             include: { user: true },
+            orderBy: {
+                createdAt: "asc",
+            },
         });
         res.json(students);
     } catch (error) {
