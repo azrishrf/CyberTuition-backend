@@ -42,4 +42,40 @@ router.get("/api/attendance/:attendanceId", async (req, res) => {
     }
 });
 
+// Get attendance
+router.get("/api/attendance", async (req, res) => {
+    const { month, year, subjectId } = req.query;
+
+    try {
+        // const { month, year } = req.query
+
+        let attendanceList = await prisma.attendance.findMany({
+            where: { idSubject: subjectId },
+            include: {
+                student_Attendance: {
+                    include: {
+                        student: true,
+                    },
+                },
+            },
+        });
+
+        attendanceList = attendanceList.filter((attendance) => {
+            // how to get the find if the date is month and year
+            const attendanceDate = new Date(attendance.date);
+            return (
+                attendanceDate.getMonth() + 1 === parseInt(month) &&
+                attendanceDate.getFullYear() === parseInt(year)
+            );
+        });
+
+        // Sort attendanceList by date in ascending order
+        attendanceList.sort((a, b) => new Date(a.date) - new Date(b.date));
+        res.json(attendanceList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch attendance data" });
+    }
+});
+
 module.exports = router;

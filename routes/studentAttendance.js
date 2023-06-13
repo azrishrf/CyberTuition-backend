@@ -246,6 +246,8 @@ router.post(
     "/api/student_attendance/:subjectId/:attendanceId",
     async (req, res) => {
         const { subjectId, attendanceId } = req.params;
+        const createdAt = getMalaysiaDateTime();
+
         try {
             const allStudents = await prisma.student_Subject.findMany({
                 where: { idSubject: subjectId },
@@ -276,6 +278,7 @@ router.post(
                                     idStudent: record.idStudent,
                                     idAttendance: record.idAttendance,
                                     isAttend: false,
+                                    createdAt,
                                 },
                             });
                         console.log(
