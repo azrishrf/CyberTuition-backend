@@ -46,9 +46,7 @@ model Subject {
   teacher         Teacher?          @relation(fields: [idTeacher], references: [idTeacher])
   idTeacher       String?
   student_Subject Student_Subject[]
-  // tuitionFee      TuitionFee[]
   attendance      Attendance[]
-   
 }
 
 model Student_Subject {

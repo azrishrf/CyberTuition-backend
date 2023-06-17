@@ -50,7 +50,11 @@ router.get("/api/subject/:subjectId", async (req, res) => {
     try {
         const subject = await prisma.subject.findUnique({
             where: { idSubject: subjectId },
-            include: { attendance: true, teacher: true, student_Subject: true },
+            include: {
+                attendance: true,
+                teacher: true,
+                student_Subject: { include: { student: true } },
+            },
         });
         return res.status(200).json(subject);
     } catch (error) {

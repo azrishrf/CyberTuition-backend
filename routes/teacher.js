@@ -63,6 +63,7 @@ router.put("/api/teacher/:teacherId", async (req, res) => {
     try {
         const updatedTeacher = await prisma.teacher.update({
             where: { idTeacher: teacherId },
+            include: { subjects: true },
             data: req.body,
         });
         res.json(updatedTeacher);
