@@ -1,3 +1,0 @@
-
-DELETE FROM Student;
-DELETE FROM User;

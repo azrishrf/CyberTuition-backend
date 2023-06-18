@@ -38,6 +38,6 @@ require("./createTuitionFee");
 
 // Start the server
 const port = 3001;
-app.listen(port, () => {
+app.listen(Number(port || 3001), "0.0.0.0", () => {
     console.log(`Server running on port ${port}`);
 });
