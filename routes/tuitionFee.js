@@ -243,6 +243,29 @@ router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
     }
 });
 
+// Update Cash Method
+// Clerk
+router.put("/api/tuitionfee/cash/:idTuitionFee", async (req, res) => {
+    const idTuitionFee = req.params.idTuitionFee;
+    const createdAt = getMalaysiaDateTime();
+
+    try {
+        const updatedTuitionFee = await prisma.tuitionFee.update({
+            where: { idTuitionFee },
+            data: {
+                statusPayment: "Telah Dibayar",
+                paymentMethod: "Tunai",
+                cashTransactionDate: createdAt,
+            },
+        });
+
+        res.json(updatedTuitionFee);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to update tuition fee." });
+    }
+});
+
 // Update Receipt Bank
 // Clerk
 router.put("/api/tuitionfee/receiptbank/:idTuitionFee", async (req, res) => {

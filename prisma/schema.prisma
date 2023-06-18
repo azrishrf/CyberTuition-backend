@@ -111,15 +111,6 @@ model ReceiptBank {
   idTuitionFee  String     @unique
 }
 
-model MonthlyReport {
-  idMonthlyReport  String @id @default(uuid())
-  month            Int
-  year             Int
-  totalStudents    Int
-  totalTeachers    Int
-  totalTuitionFees Int
-}
-
 model Attendance {
   idAttendance       String               @id @default(uuid())
   date               String

@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { format, startOfMonth, endOfMonth } = require("date-fns");
 
 // Graph
 // Graph total students
@@ -334,5 +335,101 @@ router.post("/api/report/tuitionfees", async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
+// Report Student
+// Class
+router.get("/api/student/classes/:studentId", async (req, res) => {
+    const { studentId } = req.params;
+    try {
+        // Get the current month
+        const currentDate = new Date("2023-06-18");
+        const startOfMonthDate = startOfMonth(currentDate);
+        const endOfMonthDate = endOfMonth(currentDate);
+
+        // Fetch the subjects a student takes
+        const subjects = await prisma.student_Subject.findMany({
+            where: { idStudent: studentId },
+            include: { subject: true },
+        });
+
+        // Retrieve attendance data for each subject
+        const subjectData = await Promise.all(
+            subjects.map(async (s) => {
+                const attendanceCount = await prisma.student_Attendance.count({
+                    where: {
+                        idStudent: studentId,
+                        attendance: { subject: { idSubject: s.idSubject } },
+                        createdAt: {
+                            gte: format(startOfMonthDate, "yyyy-MM-dd"),
+                            lte: format(endOfMonthDate, "yyyy-MM-dd"),
+                        },
+                    },
+                });
+
+                const attendance = await prisma.student_Attendance.count({
+                    where: {
+                        idStudent: studentId,
+                        attendance: { subject: { idSubject: s.idSubject } },
+                        isAttend: true,
+                        createdAt: {
+                            gte: format(startOfMonthDate, "yyyy-MM-dd"),
+                            lte: format(endOfMonthDate, "yyyy-MM-dd"),
+                        },
+                    },
+                });
+
+                const notAttendance = attendanceCount - attendance;
+
+                const attendancePercentage =
+                    (attendance / attendanceCount) * 100 || 0;
+                const notAttendancePercentage = 100 - attendancePercentage;
+
+                return {
+                    subjectName: s.subject.name,
+                    totalClass: attendanceCount,
+                    attendanceCount: attendance,
+                    attendancePercentage: Math.round(attendancePercentage),
+                    classNotAttended: notAttendance,
+                    notAttendancePercentage: notAttendancePercentage,
+                };
+            })
+        );
+
+        // Construct the response object with all the data
+        const data = { subjectData };
+
+        // Send the response
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+// Get current tuition student data
+router.get("/api/tuitionfeereport/:studentId", async (req, res) => {
+    const { studentId } = req.params;
+  
+    try {
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+  
+      const tuitionFee = await prisma.tuitionFee.findFirst({
+        where: {
+          idStudent: studentId,
+          month: currentMonth,
+        },
+      });
+  
+      if (!tuitionFee) {
+        return res.status(404).json({ error: "Tuition fee not found for the current month" });
+      }
+  
+      res.json(tuitionFee);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 
 module.exports = router;

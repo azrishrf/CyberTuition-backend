@@ -1,9 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const cron = require("node-cron");
+const { getMalaysiaDateTime } = require("./datetimeUtils");
 
 // Function to create tuition fee for a specific month and year
 const createTuitionFee = async (month, year) => {
+    const createdAt = getMalaysiaDateTime();
+
     // Retrieve the list of students with their associated subjects and fees
     const students = await prisma.student.findMany({
         include: {
@@ -34,13 +37,20 @@ const createTuitionFee = async (month, year) => {
                 0
             );
 
+            // Create the subjects list
+            const subjectsList = student.student_Subject
+                .map((studentSubject) => studentSubject.subject.name)
+                .join(", ");
+
             const newTuitionFee = await prisma.tuitionFee.create({
                 data: {
                     idStudent: student.idStudent,
                     month,
                     year,
                     amount: totalFee,
-                    isPaid: false, // Set the initial payment status as false
+                    statusPayment: "Belum Dibayar", // Set the initial payment status as Belum Dibayar
+                    subjectsList,
+                    createdAt,
                 },
             });
 
