@@ -243,10 +243,9 @@ router.get("/api/attendance/students/:idAttendance", async (req, res) => {
 
 // Post all student_attendance after teacher display qr code
 router.post(
-    "/api/student_attendance/:subjectId/:attendanceId",
+    "/api/student_attendance/:subjectId/:attendanceId/:date",
     async (req, res) => {
-        const { subjectId, attendanceId } = req.params;
-        const createdAt = getMalaysiaDateTime();
+        const { subjectId, attendanceId, date } = req.params;
 
         try {
             const allStudents = await prisma.student_Subject.findMany({
@@ -278,7 +277,7 @@ router.post(
                                     idStudent: record.idStudent,
                                     idAttendance: record.idAttendance,
                                     isAttend: false,
-                                    createdAt,
+                                    createdAt: date,
                                 },
                             });
                         console.log(

@@ -4,22 +4,6 @@ const prisma = new PrismaClient();
 const { getMalaysiaDateTime } = require("../datetimeUtils");
 
 // Create tuition fee
-// router.post("/api/createtuitionfee", async (req, res) => {
-//     const { month, year, idStudent, subjectsList } = req.body;
-//     console.log(req.body);
-//     console.log(idStudent);
-//     try {
-//         const createTuitionfee = await prisma.tuitionFee.create({
-//             data: { month, year, idStudent, subjectsList, isPaid: false },
-//         });
-//         return res.status(200).json(createTuitionfee);
-//     } catch (error) {
-//         console.error(error);
-//         return res.status(500).json({ message: "Internal server error" });
-//     }
-// });
-
-// Create tuition fee
 router.post("/api/tuitionfee", async (req, res) => {
     const { month, year, idStudent, amount, subjectsList } = req.body;
     const createdAt = getMalaysiaDateTime();
@@ -40,6 +24,31 @@ router.post("/api/tuitionfee", async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+// Get data tuition fee based on tuition id
+router.get("/api/tuitionfee/:idTuitionFee", async (req, res) => {
+    const { idTuitionFee } = req.params;
+
+    try {
+        const tuitionFees = await prisma.tuitionFee.findUnique({
+            where: {
+                idTuitionFee,
+            },
+            include: {
+                paymentGateway: true,
+                receiptBank: true,
+                student: true,
+            },
+        });
+
+        res.json(tuitionFees);
+    } catch (error) {
+        console.error("Error retrieving tuition fees:", error);
+        res.status(500).json({
+            error: "An error occurred while retrieving tuition fees.",
+        });
     }
 });
 
@@ -82,6 +91,7 @@ router.post("/api/checktuitionfee", async (req, res) => {
     }
 });
 
+// Get all data tuition fee based on month and year
 router.get("/api/tuitionfee/monthyear/:month/:year", async (req, res) => {
     const { month, year } = req.params;
 
@@ -243,7 +253,7 @@ router.put("/api/tuitionfee/receiptbank/:idTuitionFee", async (req, res) => {
             where: { idTuitionFee },
             data: {
                 statusPayment: "Telah Dibayar",
-                paymentMethod: "Pindahan Bank Dalam Talian",
+                paymentMethod: "Muat Naik Resit Bank",
             },
         });
 
@@ -345,7 +355,7 @@ router.get("/api/receiptbank", async (req, res) => {
         const receipts = await prisma.receiptBank.findMany({
             where: {
                 tuitionFee: {
-                    statusPayment: "Belum Dibayar",
+                    statusPayment: "Menunggu Pengesahan",
                 },
             },
             include: {
@@ -358,6 +368,30 @@ router.get("/api/receiptbank", async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
+// Update Receipt Bank
+// Student
+router.put(
+    "/api/tuitionfee/uploadreceiptbank/:idTuitionFee",
+    async (req, res) => {
+        const idTuitionFee = req.params.idTuitionFee;
+
+        try {
+            const updatedTuitionFee = await prisma.tuitionFee.update({
+                where: { idTuitionFee },
+                data: {
+                    statusPayment: "Menunggu Pengesahan",
+                    paymentMethod: "Muat Naik Resit Bank",
+                },
+            });
+
+            res.json(updatedTuitionFee);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Failed to update tuition fee." });
+        }
+    }
+);
 
 // Delete receipt bank
 // Student

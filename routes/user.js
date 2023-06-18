@@ -80,4 +80,32 @@ router.put("/api/user/:userId", async (req, res) => {
     }
 });
 
+// Change password
+router.post("/api/password", async (req, res) => {
+    const { email, currentPassword, newPassword } = req.body;
+
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user) {
+        return res.status(401).json({ error: "E-Mel Salah" });
+    }
+
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!passwordMatch) {
+        return res.status(401).json({ error: "Kata Laluan Semasa Salah" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await prisma.user.update({
+        where: { idUser: user.idUser },
+        data: { password: hashedPassword },
+    });
+
+    res.send({ message: "Password updated successfully" });
+});
+
 module.exports = router;
