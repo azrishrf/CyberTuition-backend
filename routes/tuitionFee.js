@@ -222,6 +222,42 @@ router.put("/api/paymentgateway", async (req, res) => {
     }
 });
 
+// Api Callback
+// Student
+router.post("/api/callback", async (req, res) => {
+    try {
+        // Extract the callback parameters from the request body
+        const {
+            refno,
+            status,
+            reason,
+            billcode,
+            order_id,
+            amount,
+            transaction_time,
+        } = req.body;
+
+        // Log the callback parameters
+        console.log("Callback Parameters:");
+        console.log("Reference Number:", refno);
+        console.log("Payment Status:", status);
+        console.log("Reason:", reason);
+        console.log("Billcode:", billcode);
+        console.log("Order ID:", order_id);
+        console.log("Payment Amount:", amount);
+        console.log("Transaction Time:", transaction_time);
+
+        // Send a response indicating success
+        res.status(200).send("Callback processed successfully.");
+    } catch (error) {
+        // Handle any errors that occur during processing
+        console.error("Error processing callback:", error);
+        res.status(500).send(
+            "An error occurred while processing the callback."
+        );
+    }
+});
+
 // Update tuition fee after user success make a payment through payment gateway
 // Student
 router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
