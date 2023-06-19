@@ -37,11 +37,11 @@ app.use("", require("./routes/studentAttendance"));
 require("./createTuitionFee");
 
 // Start the server
-// const port = 3001;
-// app.listen(Number(port || 3001), "0.0.0.0", () => {
-//     console.log(`Server running on port ${port}`);
-// });
-
-app.listen(3001, () => {
-    console.log("Server is running on port 3000");
+const port = 3001;
+app.listen(Number(port || 3001), "0.0.0.0", () => {
+    console.log(`Server running on port ${port}`);
 });
+
+// app.listen(3001, () => {
+//     console.log("Server is running on port 3000");
+// });
