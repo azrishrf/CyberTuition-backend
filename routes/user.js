@@ -18,7 +18,7 @@ router.post("/api/user", async (req, res) => {
         res.json(createdUser);
     } catch (error) {
         console.error(error);
-        res.status(500).send("Error creating new subject");
+        res.status(500).send("Error creating new user");
     }
 });
 
