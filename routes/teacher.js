@@ -25,6 +25,22 @@ router.get("/api/teachers", async (req, res) => {
     }
 });
 
+// Check teacher data
+router.post("/api/existingteacher/:noICTeacher", async (req, res) => {
+    const { noICTeacher } = req.params;
+    try {
+        const existingTeacher = await prisma.teacher.findUnique({
+            where: { noICTeacher },
+        });
+        const isExistingTeacher = !!existingTeacher;
+
+        res.json(isExistingTeacher);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Unable to retrieve users" });
+    }
+});
+
 // Get data of teacher
 router.get("/api/teacher/:teacherId", async (req, res) => {
     const { teacherId } = req.params;
