@@ -17,6 +17,9 @@ router.get("/api/teachers", async (req, res) => {
     try {
         const teachers = await prisma.teacher.findMany({
             include: { user: true },
+            orderBy: {
+                createdAt: "asc",
+            },
         });
         res.json(teachers);
     } catch (error) {
