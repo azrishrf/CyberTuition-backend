@@ -116,4 +116,36 @@ router.delete("/api/teacher/:teacherId", async (req, res) => {
     }
 });
 
+// Get the total number of students that a specific teacher teaches
+router.get("/api/studentscount/:teacherId", async (req, res) => {
+    const teacherId = req.params.teacherId;
+
+    try {
+        const teacher = await prisma.teacher.findUnique({
+            where: {
+                idTeacher: teacherId,
+            },
+            include: {
+                subjects: {
+                    include: {
+                        student_Subject: true,
+                    },
+                },
+            },
+        });
+
+        const totalStudents = teacher.subjects.reduce(
+            (total, subject) => total + subject.student_Subject.length,
+            0
+        );
+
+        res.status(200).json(totalStudents);
+    } catch (error) {
+        console.error("Error retrieving total students:", error);
+        res.status(500).json({
+            error: "An error occurred while retrieving the total students.",
+        });
+    }
+});
+
 module.exports = router;
