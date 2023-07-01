@@ -78,4 +78,49 @@ router.get("/api/attendance", async (req, res) => {
     }
 });
 
+// Get this month attendance percentage for specific student
+router.get("/api/attendancemonthly/:idStudent", async (req, res) => {
+    const { idStudent } = req.params;
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Adding 1 to get the current month (January is 0)
+
+    try {
+        const totalClass = await prisma.student_Attendance.findMany({
+            where: {
+                idStudent: idStudent,
+                createdAt: {
+                    startsWith: `${currentDate.getFullYear()}-${currentMonth
+                        .toString()
+                        .padStart(2, "0")}`, // Format: YYYY-MM
+                },
+            },
+        });
+        console.log(totalClass);
+        const studentAttendanceAttend =
+            await prisma.student_Attendance.findMany({
+                where: {
+                    idStudent: idStudent,
+                    isAttend: true,
+                    createdAt: {
+                        startsWith: `${currentDate.getFullYear()}-${currentMonth
+                            .toString()
+                            .padStart(2, "0")}`, // Format: YYYY-MM
+                    },
+                },
+            });
+
+        const attendancePercentage = (
+            (studentAttendanceAttend.length / totalClass.length) *
+            100
+        ).toFixed(2);
+
+        res.json(attendancePercentage);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({
+            error: "An error occurred while retrieving student attendance.",
+        });
+    }
+});
+
 module.exports = router;

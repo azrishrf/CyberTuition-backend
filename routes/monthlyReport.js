@@ -342,7 +342,7 @@ router.get("/api/student/classes/:studentId", async (req, res) => {
     const { studentId } = req.params;
     try {
         // Get the current month
-        const currentDate = new Date("2023-06-18");
+        const currentDate = new Date();
         const startOfMonthDate = startOfMonth(currentDate);
         const endOfMonthDate = endOfMonth(currentDate);
 
@@ -388,9 +388,9 @@ router.get("/api/student/classes/:studentId", async (req, res) => {
                     subjectName: s.subject.name,
                     totalClass: attendanceCount,
                     attendanceCount: attendance,
-                    attendancePercentage: Math.round(attendancePercentage),
+                    attendancePercentage: attendancePercentage.toFixed(2),
                     classNotAttended: notAttendance,
-                    notAttendancePercentage: notAttendancePercentage,
+                    notAttendancePercentage: notAttendancePercentage.toFixed(2),
                 };
             })
         );
@@ -409,27 +409,29 @@ router.get("/api/student/classes/:studentId", async (req, res) => {
 // Get current tuition student data
 router.get("/api/tuitionfeereport/:studentId", async (req, res) => {
     const { studentId } = req.params;
-  
+
     try {
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth() + 1;
-  
-      const tuitionFee = await prisma.tuitionFee.findFirst({
-        where: {
-          idStudent: studentId,
-          month: currentMonth,
-        },
-      });
-  
-      if (!tuitionFee) {
-        return res.status(404).json({ error: "Tuition fee not found for the current month" });
-      }
-  
-      res.json(tuitionFee);
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+
+        const tuitionFee = await prisma.tuitionFee.findFirst({
+            where: {
+                idStudent: studentId,
+                month: currentMonth,
+            },
+        });
+
+        if (!tuitionFee) {
+            return res
+                .status(404)
+                .json({ error: "Tuition fee not found for the current month" });
+        }
+
+        res.json(tuitionFee);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
     }
-  });
+});
 
 module.exports = router;

@@ -95,4 +95,37 @@ router.put("/api/subject/:subjectId", async (req, res) => {
     }
 });
 
+// Get subject data
+router.get("/api/students/:studentId/subjects", async (req, res) => {
+    try {
+        const { studentId } = req.params;
+
+        const student = await prisma.student.findUnique({
+            where: {
+                idStudent: studentId,
+            },
+            include: {
+                student_Subject: {
+                    include: {
+                        subject: true,
+                    },
+                },
+            },
+        });
+
+        if (!student) {
+            return res.status(404).json({ error: "Student not found" });
+        }
+
+        const subjects = student.student_Subject.map(
+            (studentSubject) => studentSubject.subject
+        );
+
+        res.json(subjects);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 module.exports = router;
