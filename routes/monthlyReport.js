@@ -215,7 +215,7 @@ router.post("/api/report/attendance", async (req, res) => {
         });
 
         // Get the total student attendance (where isAttend is true) at the specified month
-        const totalStudentAttends = await prisma.student_Attendance.count({
+        const totalStudentAttends = await prisma.student_attendance.count({
             where: {
                 createdAt: {
                     gte: startDate,
@@ -226,7 +226,7 @@ router.post("/api/report/attendance", async (req, res) => {
         });
 
         // Get the total student attendance (where isAttend is false) at the specified month
-        const totalStudentNotAttends = await prisma.student_Attendance.count({
+        const totalStudentNotAttends = await prisma.student_attendance.count({
             where: {
                 createdAt: {
                     gte: startDate,
@@ -237,7 +237,7 @@ router.post("/api/report/attendance", async (req, res) => {
         });
 
         // Get the total student attendance at the specified month
-        const totalStudentAttendanceAll = await prisma.student_Attendance.count(
+        const totalStudentAttendanceAll = await prisma.student_attendance.count(
             {
                 where: {
                     createdAt: {
@@ -290,7 +290,7 @@ router.post("/api/report/tuitionfees", async (req, res) => {
         const targetYear = parseInt(year);
 
         // Get the total amount of tuition fees at the specified month
-        const totalTuitionFees = await prisma.tuitionFee.aggregate({
+        const totalTuitionFees = await prisma.tuitionfee.aggregate({
             _sum: {
                 amount: true,
             },
@@ -301,7 +301,7 @@ router.post("/api/report/tuitionfees", async (req, res) => {
         });
 
         // Get the total amount of tuition fees with statusPayment "Telah Dibayar" at the specified month
-        const totalTuitionFeesPaid = await prisma.tuitionFee.aggregate({
+        const totalTuitionFeesPaid = await prisma.tuitionfee.aggregate({
             _sum: {
                 amount: true,
             },
@@ -313,7 +313,7 @@ router.post("/api/report/tuitionfees", async (req, res) => {
         });
 
         // Get the total amount of tuition fees with statusPayment "Belum Dibayar" at the specified month
-        const totalTuitionFeesUnpaid = await prisma.tuitionFee.aggregate({
+        const totalTuitionFeesUnpaid = await prisma.tuitionfee.aggregate({
             _sum: {
                 amount: true,
             },
@@ -347,7 +347,7 @@ router.get("/api/student/classes/:studentId", async (req, res) => {
         const endOfMonthDate = endOfMonth(currentDate);
 
         // Fetch the subjects a student takes
-        const subjects = await prisma.student_Subject.findMany({
+        const subjects = await prisma.student_subject.findMany({
             where: { idStudent: studentId },
             include: { subject: true },
         });
@@ -355,7 +355,7 @@ router.get("/api/student/classes/:studentId", async (req, res) => {
         // Retrieve attendance data for each subject
         const subjectData = await Promise.all(
             subjects.map(async (s) => {
-                const attendanceCount = await prisma.student_Attendance.count({
+                const attendanceCount = await prisma.student_attendance.count({
                     where: {
                         idStudent: studentId,
                         attendance: { subject: { idSubject: s.idSubject } },
@@ -366,7 +366,7 @@ router.get("/api/student/classes/:studentId", async (req, res) => {
                     },
                 });
 
-                const attendance = await prisma.student_Attendance.count({
+                const attendance = await prisma.student_attendance.count({
                     where: {
                         idStudent: studentId,
                         attendance: { subject: { idSubject: s.idSubject } },
@@ -414,7 +414,7 @@ router.get("/api/tuitionfeereport/:studentId", async (req, res) => {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
 
-        const tuitionFee = await prisma.tuitionFee.findFirst({
+        const tuitionFee = await prisma.tuitionfee.findFirst({
             where: {
                 idStudent: studentId,
                 month: currentMonth,

@@ -85,7 +85,7 @@ router.get("/api/attendancemonthly/:idStudent", async (req, res) => {
     const currentMonth = currentDate.getMonth() + 1; // Adding 1 to get the current month (January is 0)
 
     try {
-        const totalClass = await prisma.student_Attendance.findMany({
+        const totalClass = await prisma.student_attendance.findMany({
             where: {
                 idStudent: idStudent,
                 createdAt: {
@@ -97,7 +97,7 @@ router.get("/api/attendancemonthly/:idStudent", async (req, res) => {
         });
         console.log(totalClass);
         const studentAttendanceAttend =
-            await prisma.student_Attendance.findMany({
+            await prisma.student_attendance.findMany({
                 where: {
                     idStudent: idStudent,
                     isAttend: true,

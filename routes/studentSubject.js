@@ -6,7 +6,7 @@ const { getMalaysiaDateTime } = require("../datetimeUtils");
 // Choose subject for student
 router.post("/api/student_subject", async (req, res) => {
     const createdAt = getMalaysiaDateTime();
-    const studentSubject = await prisma.student_Subject.create({
+    const studentSubject = await prisma.student_subject.create({
         data: { ...req.body, createdAt },
     });
     res.json(studentSubject);
@@ -35,7 +35,7 @@ router.post("/api/student_subject/addsubject", async (req, res) => {
         const currentYear = currentDate.getFullYear();
 
         // Update the subjectsList for the student's tuition fee
-        const tuitionFee = await prisma.tuitionFee.findFirst({
+        const tuitionFee = await prisma.tuitionfee.findFirst({
             where: {
                 idStudent: idStudent,
                 month: currentMonth,
@@ -60,7 +60,7 @@ router.post("/api/student_subject/addsubject", async (req, res) => {
         console.log(updatedSubjectsList);
 
         // Create the student subject record
-        const studentSubject = await prisma.student_Subject.create({
+        const studentSubject = await prisma.student_subject.create({
             data: {
                 idStudent,
                 idSubject,
@@ -75,7 +75,7 @@ router.post("/api/student_subject/addsubject", async (req, res) => {
         const newAmount = existingAmount + subjectFee;
 
         // Update the tuition fee for the current month and year
-        const updatedTuitionFee = await prisma.tuitionFee.update({
+        const updatedTuitionFee = await prisma.tuitionfee.update({
             where: {
                 idTuitionFee: tuitionFee.idTuitionFee,
             },
@@ -100,7 +100,7 @@ router.delete("/api/student_subject/:studentSubjectId", async (req, res) => {
         const studentSubjectId = req.params.studentSubjectId; // Retrieve the studentSubjectId from the route parameters
 
         // Find the Student_Subject record to delete
-        const studentSubject = await prisma.student_Subject.findUnique({
+        const studentSubject = await prisma.student_subject.findUnique({
             where: { idStudentSubject: studentSubjectId },
             include: {
                 subject: true,
@@ -145,14 +145,14 @@ router.delete("/api/student_subject/:studentSubjectId", async (req, res) => {
         const reductionAmount = currentTuitionFee.amount - subjectFee;
 
         // Update the Student_Subject and TuitionFee records
-        const deletedStudentSubject = await prisma.student_Subject.delete({
+        const deletedStudentSubject = await prisma.student_subject.delete({
             where: { idStudentSubject: studentSubjectId },
             include: {
                 subject: true,
             },
         });
 
-        const updatedTuitionFee = await prisma.tuitionFee.update({
+        const updatedTuitionFee = await prisma.tuitionfee.update({
             where: { idTuitionFee: currentTuitionFee.idTuitionFee },
             data: {
                 subjectsList: updatedSubjectsList,

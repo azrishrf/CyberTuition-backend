@@ -9,7 +9,7 @@ router.post("/api/tuitionfee", async (req, res) => {
     const createdAt = getMalaysiaDateTime();
 
     try {
-        const tuitionfee = await prisma.tuitionFee.create({
+        const tuitionfee = await prisma.tuitionfee.create({
             data: {
                 month,
                 year,
@@ -32,7 +32,7 @@ router.get("/api/tuitionfee/:idTuitionFee", async (req, res) => {
     const { idTuitionFee } = req.params;
 
     try {
-        const tuitionFees = await prisma.tuitionFee.findUnique({
+        const tuitionFees = await prisma.tuitionfee.findUnique({
             where: {
                 idTuitionFee,
             },
@@ -58,7 +58,7 @@ router.post("/api/check-tuition-fee", async (req, res) => {
         const { month, year, studentId } = req.body;
 
         // Query the TuitionFee table to check if a record exists for the given month, year, and student ID
-        const tuitionFee = await prisma.tuitionFee.findFirst({
+        const tuitionFee = await prisma.tuitionfee.findFirst({
             where: {
                 month,
                 year,
@@ -81,7 +81,7 @@ router.post("/api/check-tuition-fee", async (req, res) => {
 router.post("/api/checktuitionfee", async (req, res) => {
     const { month, year, idStudent } = req.body;
     try {
-        const tuitionfee = await prisma.tuitionFee.findFirst({
+        const tuitionfee = await prisma.tuitionfee.findFirst({
             where: { month, year, idStudent },
         });
         return res.status(200).json(tuitionfee);
@@ -96,7 +96,7 @@ router.get("/api/tuitionfee/monthyear/:month/:year", async (req, res) => {
     const { month, year } = req.params;
 
     try {
-        const tuitionFees = await prisma.tuitionFee.findMany({
+        const tuitionFees = await prisma.tuitionfee.findMany({
             where: {
                 month: parseInt(month),
                 year: parseInt(year),
@@ -121,7 +121,7 @@ router.post("/api/tuition-fee/:studentId", async (req, res) => {
         const { studentId } = req.params;
         const { month, year, amount } = req.body;
 
-        const newTuitionFee = await prisma.TuitionFee.create({
+        const newTuitionFee = await prisma.tuitionfee.create({
             data: {
                 idStudent: studentId,
                 month: month,
@@ -144,7 +144,7 @@ router.get("/api/tuitionfee/paymentgateway/:idTuitionFee", async (req, res) => {
     const idTuitionFee = req.params.idTuitionFee;
 
     try {
-        const tuitionFeeWithPaymentGateway = await prisma.tuitionFee.findUnique(
+        const tuitionFeeWithPaymentGateway = await prisma.tuitionfee.findUnique(
             {
                 where: { idTuitionFee },
                 include: { paymentGateway: true },
@@ -185,7 +185,7 @@ router.post("/api/paymentgateway", async (req, res) => {
     try {
         const { billCode, idTuitionFee } = req.body;
 
-        const createdPaymentGateway = await prisma.paymentGateway.create({
+        const createdPaymentGateway = await prisma.paymentgateway.create({
             data: {
                 billCode,
                 idTuitionFee,
@@ -207,7 +207,7 @@ router.put("/api/paymentgateway", async (req, res) => {
 
         const transactionDate = getMalaysiaDateTime();
 
-        const createdPaymentGateway = await prisma.paymentGateway.update({
+        const createdPaymentGateway = await prisma.paymentgateway.update({
             where: { paymentGatewayId },
             data: {
                 transactionBill,
@@ -264,7 +264,7 @@ router.put("/api/tuitionfee/:idTuitionFee", async (req, res) => {
     const idTuitionFee = req.params.idTuitionFee;
 
     try {
-        const updatedTuitionFee = await prisma.tuitionFee.update({
+        const updatedTuitionFee = await prisma.tuitionfee.update({
             where: { idTuitionFee },
             data: {
                 statusPayment: "Telah Dibayar",
@@ -286,7 +286,7 @@ router.put("/api/tuitionfee/cash/:idTuitionFee", async (req, res) => {
     const createdAt = getMalaysiaDateTime();
 
     try {
-        const updatedTuitionFee = await prisma.tuitionFee.update({
+        const updatedTuitionFee = await prisma.tuitionfee.update({
             where: { idTuitionFee },
             data: {
                 statusPayment: "Telah Dibayar",
@@ -308,7 +308,7 @@ router.put("/api/tuitionfee/receiptbank/:idTuitionFee", async (req, res) => {
     const idTuitionFee = req.params.idTuitionFee;
 
     try {
-        const updatedTuitionFee = await prisma.tuitionFee.update({
+        const updatedTuitionFee = await prisma.tuitionfee.update({
             where: { idTuitionFee },
             data: {
                 statusPayment: "Telah Dibayar",
@@ -332,7 +332,7 @@ router.delete(
         const receiptBankId = req.params.receiptBankId;
 
         try {
-            const deletedReceiptBank = await prisma.receiptBank.delete({
+            const deletedReceiptBank = await prisma.receiptbank.delete({
                 where: { receiptBankId },
             });
 
@@ -350,7 +350,7 @@ router.get("/api/receiptbank/:idTuitionFee", async (req, res) => {
     const idTuitionFee = req.params.idTuitionFee;
 
     try {
-        const receiptBank = await prisma.receiptBank.findUnique({
+        const receiptBank = await prisma.receiptbank.findUnique({
             where: {
                 idTuitionFee,
             },
@@ -370,7 +370,7 @@ router.get("/api/receiptbank/id/:idReceiptBank", async (req, res) => {
     const idReceiptBank = req.params.idReceiptBank;
 
     try {
-        const receiptBank = await prisma.receiptBank.findUnique({
+        const receiptBank = await prisma.receiptbank.findUnique({
             where: {
                 receiptBankId: idReceiptBank,
             },
@@ -392,7 +392,7 @@ router.post("/api/receiptbank", async (req, res) => {
         const { filePath, idTuitionFee, fileName } = req.body;
         const createdAt = getMalaysiaDateTime();
 
-        const createdReceiptBank = await prisma.receiptBank.create({
+        const createdReceiptBank = await prisma.receiptbank.create({
             data: {
                 filePath,
                 idTuitionFee,
@@ -411,7 +411,7 @@ router.post("/api/receiptbank", async (req, res) => {
 // Get all receipt bank data
 router.get("/api/receiptbank", async (req, res) => {
     try {
-        const receipts = await prisma.receiptBank.findMany({
+        const receipts = await prisma.receiptbank.findMany({
             where: {
                 tuitionFee: {
                     statusPayment: "Menunggu Pengesahan",
@@ -436,7 +436,7 @@ router.put(
         const idTuitionFee = req.params.idTuitionFee;
 
         try {
-            const updatedTuitionFee = await prisma.tuitionFee.update({
+            const updatedTuitionFee = await prisma.tuitionfee.update({
                 where: { idTuitionFee },
                 data: {
                     statusPayment: "Menunggu Pengesahan",
@@ -459,7 +459,7 @@ router.delete("/api/receiptbank/:id", async (req, res) => {
         const { id } = req.params;
 
         // Delete the receipt bank entry
-        await prisma.receiptBank.delete({
+        await prisma.receiptbank.delete({
             where: { receiptBankId: id },
         });
 

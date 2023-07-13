@@ -123,15 +123,15 @@ router.delete("/api/student/:studentId", async (req, res) => {
     try {
         // Delete related foreign key first
         // Delete student_Subject records
-        await prisma.student_Subject.deleteMany({
+        await prisma.student_subject.deleteMany({
             where: { idStudent: studentId },
         });
         // Delete tuitionFee records
-        await prisma.tuitionFee.deleteMany({
+        await prisma.tuitionfee.deleteMany({
             where: { idStudent: studentId },
         });
         // Delete student_Attendance records
-        await prisma.student_Attendance.deleteMany({
+        await prisma.student_attendance.deleteMany({
             where: { idStudent: studentId },
         });
 

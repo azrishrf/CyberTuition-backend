@@ -5,8 +5,6 @@ const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Import the createTuitionFee function from createTuitionFee.js
-
 app.use(express.json());
 /* HTTP Status Code
 200 - Ok : read, delete, update

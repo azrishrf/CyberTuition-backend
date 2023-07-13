@@ -7,7 +7,7 @@ const { getMalaysiaDateTime } = require("../datetimeUtils");
 router.post("/api/student_attendance", async (req, res) => {
     const createdAt = getMalaysiaDateTime();
 
-    const studentAttendance = await prisma.student_Attendance.create({
+    const studentAttendance = await prisma.student_attendance.create({
         data: { ...req.body, createdAt },
     });
     res.json(studentAttendance);
@@ -18,7 +18,7 @@ router.get("/api/studentAttendance/:idStudentAttendance", async (req, res) => {
     const { idStudentAttendance } = req.params;
     try {
         const studentAttendanceData =
-            await prisma.Student_Attendance.findUnique({
+            await prisma.Student_attendance.findUnique({
                 where: { idStudentAttendance },
                 include: {
                     student: true,
@@ -49,7 +49,7 @@ router.get("/api/studentattend/:attendanceId", async (req, res) => {
                 },
             },
         });
-        const studentCount = attendance.student_Attendance.length;
+        const studentCount = attendance.student_attendance.length;
 
         return res.status(200).json(studentCount);
     } catch (error) {
@@ -63,7 +63,7 @@ router.put("/api/student_attendance/:idStudentAttendance", async (req, res) => {
     const { idStudentAttendance } = req.params;
 
     try {
-        const updatedStudentAttendance = await prisma.student_Attendance.update(
+        const updatedStudentAttendance = await prisma.student_attendance.update(
             {
                 where: { idStudentAttendance },
                 data: { isAttend: true },
@@ -84,7 +84,7 @@ router.put("/api/markAttend/student_attendance", async (req, res) => {
     const { idAttendance, idStudent } = req.body;
 
     try {
-        const studentAttendance = await prisma.student_Attendance.findFirst({
+        const studentAttendance = await prisma.student_attendance.findFirst({
             where: {
                 idAttendance,
                 idStudent,
@@ -92,7 +92,7 @@ router.put("/api/markAttend/student_attendance", async (req, res) => {
         });
 
         const idStudentAttendance = studentAttendance.idStudentAttendance;
-        const updatedStudentAttendance = await prisma.student_Attendance.update(
+        const updatedStudentAttendance = await prisma.student_attendance.update(
             {
                 where: { idStudentAttendance },
                 data: { idAttendance, idStudent, isAttend: true },
@@ -113,7 +113,7 @@ router.put("/api/markNotAttend/student_attendance", async (req, res) => {
     const { idAttendance, idStudent } = req.body;
 
     try {
-        const studentAttendance = await prisma.student_Attendance.findFirst({
+        const studentAttendance = await prisma.student_attendance.findFirst({
             where: {
                 idAttendance,
                 idStudent,
@@ -121,7 +121,7 @@ router.put("/api/markNotAttend/student_attendance", async (req, res) => {
         });
 
         const idStudentAttendance = studentAttendance.idStudentAttendance;
-        const updatedStudentAttendance = await prisma.student_Attendance.update(
+        const updatedStudentAttendance = await prisma.student_attendance.update(
             {
                 where: { idStudentAttendance },
                 data: { idAttendance, idStudent, isAttend: false },
@@ -150,7 +150,7 @@ router.post("/api/student_subject/check-subject-match", async (req, res) => {
         });
 
         if (attendance) {
-            const match = await prisma.student_Subject.findFirst({
+            const match = await prisma.student_subject.findFirst({
                 where: {
                     idStudent,
                     idSubject: attendance.idSubject,
@@ -177,7 +177,7 @@ router.get(
     async (req, res) => {
         const { attendanceId, studentId } = req.params;
         try {
-            const existingRecord = await prisma.student_Attendance.findFirst({
+            const existingRecord = await prisma.student_attendance.findFirst({
                 where: {
                     idAttendance: attendanceId,
                     idStudent: studentId,
@@ -198,7 +198,7 @@ router.get(
 router.get("/api/student_attendance/:studentId", async (req, res) => {
     const { studentId } = req.params;
     try {
-        const existingRecord = await prisma.student_Attendance.findMany({
+        const existingRecord = await prisma.student_attendance.findMany({
             where: {
                 idStudent: studentId,
             },
@@ -218,7 +218,7 @@ router.get("/api/attendance/students/:idAttendance", async (req, res) => {
     const idAttendance = req.params.idAttendance;
 
     try {
-        const students = await prisma.student_Attendance.findMany({
+        const students = await prisma.student_attendance.findMany({
             where: { idAttendance },
             include: { student: true },
         });
@@ -248,7 +248,7 @@ router.post(
         const { subjectId, attendanceId, date } = req.params;
 
         try {
-            const allStudents = await prisma.student_Subject.findMany({
+            const allStudents = await prisma.student_subject.findMany({
                 where: { idSubject: subjectId },
             });
 
@@ -260,7 +260,7 @@ router.post(
             await Promise.all(
                 existingRecord.map(async (record) => {
                     const foundRecord =
-                        await prisma.student_Attendance.findFirst({
+                        await prisma.student_attendance.findFirst({
                             where: {
                                 idStudent: record.idStudent,
                                 idAttendance: record.idAttendance,
@@ -272,7 +272,7 @@ router.post(
                     } else {
                         // Create student_attendance record here
                         const createdRecord =
-                            await prisma.student_Attendance.create({
+                            await prisma.student_attendance.create({
                                 data: {
                                     idStudent: record.idStudent,
                                     idAttendance: record.idAttendance,

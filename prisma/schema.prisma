@@ -7,17 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model user {
   idUser   String   @id @default(uuid())
   email    String   @unique
   password String
   role     String
-  student  Student?
-  teacher  Teacher?
-  clerk    Clerk?
+  student  student?
+  teacher  teacher?
+  clerk    clerk?
 }
 
-model Student {
+model student {
   idStudent          String               @id @default(uuid())
   nameStudent        String
   noICStudent        String               @unique
@@ -30,37 +30,37 @@ model Student {
   noPhoneParent      String
   isRegistered       Boolean
   createdAt          String
-  user               User                 @relation(fields: [idUser], references: [idUser])
+  user               user                 @relation(fields: [idUser], references: [idUser])
   idUser             String               @unique
-  student_Subject    Student_Subject[]
-  tuitionFee         TuitionFee[]
-  student_Attendance Student_Attendance[]
+  student_Subject    student_subject[]
+  tuitionFee         tuitionfee[]
+  student_Attendance student_attendance[]
 }
 
-model Subject {
+model subject {
   idSubject       String            @id @default(uuid())
   name            String
   time            String
   day             String
   fee             Int
-  teacher         Teacher?          @relation(fields: [idTeacher], references: [idTeacher])
+  teacher         teacher?          @relation(fields: [idTeacher], references: [idTeacher])
   idTeacher       String?
-  student_Subject Student_Subject[]
-  attendance      Attendance[]
+  student_Subject student_subject[]
+  attendance      attendance[]
 }
 
-model Student_Subject {
+model student_subject {
   idStudentSubject String  @id @default(uuid())
-  subject          Subject @relation(fields: [idSubject], references: [idSubject])
+  subject          subject @relation(fields: [idSubject], references: [idSubject])
   idSubject        String
-  student          Student @relation(fields: [idStudent], references: [idStudent])
+  student          student @relation(fields: [idStudent], references: [idStudent])
   idStudent        String
-  createdAt String
+  createdAt        String
 }
 
-model Teacher {
+model teacher {
   idTeacher      String    @id @default(uuid())
-  user           User      @relation(fields: [idUser], references: [idUser])
+  user           user      @relation(fields: [idUser], references: [idUser])
   idUser         String    @unique
   nameTeacher    String
   noICTeacher    String
@@ -68,64 +68,64 @@ model Teacher {
   noPhoneTeacher String
   addressTeacher String
   createdAt      String
-  subjects       Subject[]
+  subjects       subject[]
 }
 
-model Clerk {
+model clerk {
   idClerk String @id @default(uuid())
-  user    User   @relation(fields: [idUser], references: [idUser])
+  user    user   @relation(fields: [idUser], references: [idUser])
   idUser  String @unique
 }
 
-model TuitionFee {
-  idTuitionFee   String          @id @default(uuid())
-  student        Student         @relation(fields: [idStudent], references: [idStudent])
-  idStudent      String
-  subjectsList   String
-  month          Int
-  year           Int
-  amount         Int
-  statusPayment  String
-  paymentMethod  String?
-  createdAt      String
+model tuitionfee {
+  idTuitionFee        String          @id @default(uuid())
+  student             student         @relation(fields: [idStudent], references: [idStudent])
+  idStudent           String
+  subjectsList        String
+  month               Int
+  year                Int
+  amount              Int
+  statusPayment       String
+  paymentMethod       String?
+  createdAt           String
   cashTransactionDate String?
-  paymentGateway PaymentGateway?
-  receiptBank    ReceiptBank?
+  paymentGateway      paymentgateway?
+  receiptBank         receiptbank?
 }
 
-model PaymentGateway {
+model paymentgateway {
   paymentGatewayId String     @id @default(uuid())
   transactionBill  String?
   billCode         String
   transactionDate  String?
-  tuitionFee       TuitionFee @relation(fields: [idTuitionFee], references: [idTuitionFee])
+  tuitionFee       tuitionfee @relation(fields: [idTuitionFee], references: [idTuitionFee])
   idTuitionFee     String     @unique
 }
 
-model ReceiptBank {
+model receiptbank {
   receiptBankId String     @id @default(uuid())
   filePath      String
   fileName      String
   createdAt     String
-  tuitionFee    TuitionFee @relation(fields: [idTuitionFee], references: [idTuitionFee])
+  tuitionFee    tuitionfee @relation(fields: [idTuitionFee], references: [idTuitionFee])
   idTuitionFee  String     @unique
 }
 
-model Attendance {
+model attendance {
   idAttendance       String               @id @default(uuid())
   date               String
   time               String
-  student_Attendance Student_Attendance[]
-  subject            Subject              @relation(fields: [idSubject], references: [idSubject])
+  student_Attendance student_attendance[]
+  subject            subject              @relation(fields: [idSubject], references: [idSubject])
   idSubject          String
 }
 
-model Student_Attendance {
+model student_attendance {
   idStudentAttendance String     @id @default(uuid())
-  attendance          Attendance @relation(fields: [idAttendance], references: [idAttendance])
+  attendance          attendance @relation(fields: [idAttendance], references: [idAttendance])
   idAttendance        String
-  student             Student    @relation(fields: [idStudent], references: [idStudent])
+  student             student    @relation(fields: [idStudent], references: [idStudent])
   idStudent           String
   isAttend            Boolean
-  createdAt String
+  createdAt           String
 }
