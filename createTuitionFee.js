@@ -21,7 +21,7 @@ const createTuitionFee = async (month, year) => {
     // Create tuition fee records for each student
     const tuitionFeePromises = students.map(async (student) => {
         // Check if a tuition fee record already exists for the given month and year
-        const existingTuitionFee = await prisma.tuitionFee.findFirst({
+        const existingTuitionFee = await prisma.tuitionfee.findFirst({
             where: { idStudent: student.idStudent, month, year },
         });
 
@@ -42,7 +42,7 @@ const createTuitionFee = async (month, year) => {
                 .map((studentSubject) => studentSubject.subject.name)
                 .join(", ");
 
-            const newTuitionFee = await prisma.tuitionFee.create({
+            const newTuitionFee = await prisma.tuitionfee.create({
                 data: {
                     idStudent: student.idStudent,
                     month,
@@ -65,7 +65,7 @@ const createTuitionFee = async (month, year) => {
 };
 
 // Schedule the task to run at the beginning of each month
-cron.schedule("18 02 * * *", () => {
+cron.schedule("22 02 * * *", () => {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
