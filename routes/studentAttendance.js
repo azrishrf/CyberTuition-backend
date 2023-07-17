@@ -18,7 +18,7 @@ router.get("/api/studentAttendance/:idStudentAttendance", async (req, res) => {
     const { idStudentAttendance } = req.params;
     try {
         const studentAttendanceData =
-            await prisma.Student_attendance.findUnique({
+            await prisma.student_attendance.findUnique({
                 where: { idStudentAttendance },
                 include: {
                     student: true,
