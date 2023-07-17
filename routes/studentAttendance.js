@@ -49,7 +49,7 @@ router.get("/api/studentattend/:attendanceId", async (req, res) => {
                 },
             },
         });
-        const studentCount = attendance.student_attendance.length;
+        const studentCount = attendance.student_Attendance.length;
 
         return res.status(200).json(studentCount);
     } catch (error) {
