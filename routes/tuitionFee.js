@@ -322,6 +322,27 @@ router.put("/api/tuitionfee/receiptbank/:idTuitionFee", async (req, res) => {
         res.status(500).json({ error: "Failed to update tuition fee." });
     }
 });
+router.put(
+    "/api/tuitionfee/deletereceiptbank/:idTuitionFee",
+    async (req, res) => {
+        const idTuitionFee = req.params.idTuitionFee;
+
+        try {
+            const updatedTuitionFee = await prisma.tuitionfee.update({
+                where: { idTuitionFee },
+                data: {
+                    statusPayment: "Belum Dibayar",
+                    paymentMethod: "",
+                },
+            });
+
+            res.json(updatedTuitionFee);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Failed to update tuition fee." });
+        }
+    }
+);
 
 // Cancelled Receipt Bank
 // Clerk

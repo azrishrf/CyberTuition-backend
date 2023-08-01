@@ -126,6 +126,20 @@ router.delete("/api/student/:studentId", async (req, res) => {
         await prisma.student_subject.deleteMany({
             where: { idStudent: studentId },
         });
+        // Delete tuitionFee records associated with the student
+        const tuitionFees = await prisma.tuitionfee.findMany({
+            where: { idStudent: studentId },
+        });
+
+        for (const tuitionFee of tuitionFees) {
+            // Delete associated receiptbank and paymentgateway records
+            await prisma.receiptbank.deleteMany({
+                where: { idTuitionFee: tuitionFee.idTuitionFee },
+            });
+            await prisma.paymentgateway.deleteMany({
+                where: { idTuitionFee: tuitionFee.idTuitionFee },
+            });
+        }
         // Delete tuitionFee records
         await prisma.tuitionfee.deleteMany({
             where: { idStudent: studentId },
