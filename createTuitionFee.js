@@ -65,7 +65,7 @@ const createTuitionFee = async (month, year) => {
 };
 
 // Schedule the task to run at the beginning of each month
-cron.schedule("48 19 * * *", () => {
+cron.schedule("03 20 * * *", () => {
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
